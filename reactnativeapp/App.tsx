@@ -8,6 +8,7 @@
  * @format
  */
 
+import {ApolloClient, ApolloProvider, InMemoryCache} from '@apollo/client';
 import {
   NavigationContainer,
   NavigationContainerRef,
@@ -21,6 +22,11 @@ import routingInstrumentation from './routingInstrumentation';
 
 const Stack = createNativeStackNavigator();
 
+const client = new ApolloClient({
+  uri: 'https://shopping-uatzyx.theclub.com.hk/graphql',
+  cache: new InMemoryCache(),
+});
+
 const App = () => {
   const navigationRef = React.useRef<NavigationContainerRef<{}>>(null);
 
@@ -29,12 +35,14 @@ const App = () => {
   }, []);
 
   return (
-    <NavigationContainer ref={navigationRef} onReady={onNavigationReady}>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Details" component={Details} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ApolloProvider client={client}>
+      <NavigationContainer ref={navigationRef} onReady={onNavigationReady}>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Details" component={Details} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ApolloProvider>
   );
 };
 
